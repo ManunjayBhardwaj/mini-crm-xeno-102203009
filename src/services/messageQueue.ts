@@ -42,11 +42,17 @@ class MessageQueue {
 
   private async setupSubscriptions() {
     const subscriber = redis.duplicate();
-    await subscriber.subscribe(Object.values(QUEUES));
+
+    // ✅ Spread the values so each queue is passed as a separate argument
+    await subscriber.subscribe(...Object.values(QUEUES));
 
     subscriber.on('message', (channel, message) => {
-      const parsedMessage: QueueMessage = JSON.parse(message);
-      eventEmitter.emit(channel, parsedMessage);
+      try {
+        const parsedMessage: QueueMessage = JSON.parse(message);
+        eventEmitter.emit(channel, parsedMessage);
+      } catch (err) {
+        console.error(`Failed to parse message from ${channel}:`, err);
+      }
     });
   }
 
