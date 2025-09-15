@@ -46,15 +46,16 @@ export default function Navigation() {
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             {session ? (
               <div className="flex items-center space-x-4">
-                {session.user?.image && (
-                  <Image
-                    src={session.user.image}
-                    alt={session.user.name || ''}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                )}
+               {(session.user as { image?: string })?.image && (
+  <Image
+    src={(session.user as { image?: string }).image!}
+    alt={session.user?.name || ''}
+    width={32}
+    height={32}
+    className="rounded-full"
+  />
+)}
+
                 <span className="text-sm text-gray-700">{session.user?.name}</span>
                 <button
                   onClick={() => signOut({ callbackUrl: '/auth/signin' })}
