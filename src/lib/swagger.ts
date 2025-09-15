@@ -272,4 +272,6 @@ const apiConfig = {
   },
 };
 
-export const getSwaggerSpec = () => createSwaggerSpec(apiConfig);
+export const getSwaggerSpec = () => createSwaggerSpec({
+    definition: apiConfig,
+  });
