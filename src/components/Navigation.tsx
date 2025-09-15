@@ -57,19 +57,19 @@ export default function Navigation() {
                 )}
                 <span className="text-sm text-gray-700">{session.user?.name}</span>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({ callbackUrl: '/auth/signin' })}
                   className="text-sm text-gray-700 hover:text-gray-900"
                 >
                   Sign out
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => signIn('google')}
+              <Link
+                href="/auth/signin"
                 className="text-sm text-gray-700 hover:text-gray-900"
               >
                 Sign in
-              </button>
+              </Link>
             )}
           </div>
         </div>

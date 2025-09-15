@@ -6,11 +6,6 @@ import User from '@/models/User';
 import { connectDB } from './db';
 
 export const authOptions: NextAuthOptions = {
-  pages: {
-    signIn: '/auth/signin',
-    signOut: '/auth/signin',
-    error: '/auth/signin',
-  },
   providers: [
     CredentialsProvider({
       id: 'credentials',

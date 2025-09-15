@@ -20,6 +20,8 @@ export default function CampaignCreator() {
     { field: 'totalSpent', operator: '>', value: '', conjunction: 'AND' }
   ]);
   const [audiencePreview, setAudiencePreview] = useState<number | null>(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const addRule = () => {
     setRules([...rules, { field: 'totalSpent', operator: '>', value: '', conjunction: 'AND' }]);
@@ -46,6 +48,8 @@ export default function CampaignCreator() {
   };
 
   const saveCampaign = async () => {
+    setError('');
+    setSuccess('');
     try {
       // First save the segment
       const segmentResponse = await fetch('/api/segments', {
@@ -58,6 +62,10 @@ export default function CampaignCreator() {
         })
       });
       const segmentData = await segmentResponse.json();
+      if (!segmentResponse.ok) {
+        setError(segmentData.error || 'Failed to create segment');
+        return;
+      }
 
       // Then create the campaign
       const campaignResponse = await fetch('/api/campaigns', {
@@ -70,11 +78,19 @@ export default function CampaignCreator() {
           createdBy: session?.user?.email
         })
       });
-
-      if (campaignResponse.ok) {
-        router.push('/campaigns');
+      const campaignData = await campaignResponse.json();
+      if (!campaignResponse.ok) {
+        setError(campaignData.error || 'Failed to create campaign');
+        return;
       }
+
+      setSuccess('Campaign created successfully!');
+      setName('');
+      setMessage('');
+      setRules([{ field: 'totalSpent', operator: '>', value: '', conjunction: 'AND' }]);
+      setTimeout(() => router.push('/campaigns'), 1000);
     } catch (error) {
+      setError('Error saving campaign');
       console.error('Error saving campaign:', error);
     }
   };
@@ -175,6 +191,8 @@ export default function CampaignCreator() {
         </div>
 
         <div>
+          {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
+          {success && <div className="text-green-600 text-sm mb-2">{success}</div>}
           <button
             onClick={saveCampaign}
             className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md"
