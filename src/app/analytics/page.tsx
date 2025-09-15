@@ -4,7 +4,9 @@ import { useQuery } from 'react-query';
 import { useState } from 'react';
 
 export default function AnalyticsPage() {
-  const [selectedCampaign, setSelectedCampaign] = useState(null);
+  // ✅ allow both string and null
+  const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+
   const { data: campaigns = [], isLoading } = useQuery('allCampaigns', async () => {
     const response = await fetch('/api/campaigns');
     return response.json();
@@ -17,12 +19,14 @@ export default function AnalyticsPage() {
         <label className="block mb-2 font-medium">Select a Campaign:</label>
         <select
           className="border rounded px-3 py-2 w-full"
-          value={selectedCampaign || ''}
-          onChange={e => setSelectedCampaign(e.target.value)}
+          value={selectedCampaign ?? ''}  // ✅ safe fallback
+          onChange={(e) => setSelectedCampaign(e.target.value)}
         >
           <option value="">-- Select --</option>
           {campaigns.map((c: any) => (
-            <option key={c._id} value={c._id}>{c.name}</option>
+            <option key={c._id} value={c._id}>
+              {c.name}
+            </option>
           ))}
         </select>
       </div>
